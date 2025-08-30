@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="ar">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>لوحة التحكم</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/bs-theme-overrides.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+    <main class="container my-4" aria-label="لوحة تحكم الكورسات">
+        <header class="d-flex justify-content-between align-items-center mb-3" dir="rtl">
+            <div class="text-warning">
+                <h1 class="h4 mb-0">لوحة تحكم الكورسات</h1>
+                <p class="small mb-0">واجهة إدارة متكاملة متصلة بـ Google Sheets.</p>
+            </div>
+            <div class="d-flex align-items-center gap-2"><input class="form-control-sm form-control" type="search" dir="ltr" id="adminSearch" placeholder="Search by title or tag..." style="min-width:220px;"><button class="btn btn-warning btn-sm" id="addCourseBtn" type="button" aria-controls="courseEditorOffcanvas">+ Add New Course</button></div>
+        </header>
+        <div class="text-start mb-2" id="adminStatus" aria-live="polite" style="min-height:1.2rem;"></div>
+        <section id="adminCoursesArea" class="row g-3" aria-label="Courses list (admin view)">
+            <div class="col-12 text-center p-5">
+                <div class="text-warning spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>
+                <p class="text-muted mt-2" dir="ltr">Loading courses from Google Sheets...</p>
+            </div>
+        </section>
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="courseEditorOffcanvas" aria-labelledby="courseEditorLabel" style="max-width:80vw;">
+            <div class="offcanvas-header">
+                <h5 id="courseEditorLabel" class="offcanvas-title">Course Editor</h5><button class="btn-close" type="button" data-bs-dismiss="offcanvas" aria-label="Close editor"></button>
+            </div>
+            <div class="offcanvas-body">
+                <form id="editorForm" novalidate=""><input type="hidden" id="editorCourseId" value="">
+                    <div class="mb-2"><label class="form-label" for="editorTitle">عنوان الدورة</label><input class="form-control form-control form-control form-control" type="text" id="editorTitle" placeholder="Introduction to Data Science" required=""></div>
+                    <div class="mb-2"><label class="form-label" for="editorDescription">وصف الدورة</label><textarea class="form-control form-control form-control form-control" id="editorDescription" placeholder="A short marketing paragraph" required="" rows="3"></textarea></div>
+                    <div class="row g-2 mb-2">
+                        <div class="col-md-6"><label class="form-label" for="editorInstructor">المحاضر</label><input class="form-control form-control form-control form-control" type="text" id="editorInstructor" placeholder="Dr. Sarah Wilson"></div>
+                        <div class="col-md-6"><label class="form-label" for="editorCategory">التصنيف</label><select class="form-select form-select form-select form-select" id="editorCategory">
+                                <option value="Business">Business</option>
+                                <option value="Design">Design</option>
+                                <option value="Developer">Developer</option>
+                                <option value="Health">Health</option>
+                                <option value="IT">IT</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Photography">Photography</option>
+                                <option value="Teaching Online">Teaching Online</option>
+                            </select></div>
+                    </div>
+                    <div class="row g-2 mb-2">
+                        <div class="col-md-4"><label class="form-label" for="editorLevel">المستوى</label><select class="form-select form-select form-select" id="editorLevel">
+                                <option value="Beginner">Beginner</option>
+                                <option value="Intermediate">Intermediate</option>
+                                <option value="Advanced">Advanced</option>
+                                <option value="All Levels">All Levels</option>
+                            </select></div>
+                        <div class="col-md-4"><label class="form-label" for="editorPrice">السعر (USD)</label><input class="form-control form-control form-control" type="number" id="editorPrice"></div>
+                        <div class="col-md-4"><label class="form-label" for="editorStudents">عدد الطلاب</label><input class="form-control form-control form-control" type="number" id="editorStudents" min="0" placeholder="e.g., 510"></div>
+                        <div class="col mb-3"><label class="form-label" for="editorLessons"><i class="bi bi-play-circle me-1"></i> عدد الدروس </label><input class="form-control form-control" type="number" id="editorLessons" min="0" placeholder="Lessons number" step="1">
+                            <div class="form-text"><span>العدد الإجمالي للدروس في جميع الأقسام</span></div>
+                        </div>
+                    </div>
+                    <div class="row g-2 mb-2">
+                        <div class="col-12"><label class="form-label" for="editorTags">Tags</label><input class="form-control form-control form-control" type="text" id="editorTags"></div>
+                    </div>
+                    <div class="row g-2 mb-2">
+                        <div class="col-md-6"><label class="form-label">صورة البطاقة (Card)</label><button class="btn btn-outline-secondary d-block w-100 mb-2" id="uploadCardBtn" type="button">Upload Image</button><input type="hidden" id="editorImageCard"><img class="img-thumbnail" id="previewImageCard" src="" alt="Card image preview" style="display:none;max-height:100px;"></div>
+                        <div class="col-md-6"><label class="form-label">صورة التفاصيل (Details)</label><button class="btn btn-outline-secondary d-block w-100 mb-2" id="uploadDetailsBtn" type="button">Upload Image</button><input type="hidden" id="editorImageDetails"><img class="img-thumbnail" id="previewImageDetails" src="" alt="Details image preview" style="display:none;max-height:100px;"></div>
+                    </div>
+                    <hr>
+                    <div class="mb-3"><label class="form-label">أهداف التعلم</label>
+                        <div id="editorObjectives" role="list"></div><button class="btn btn-outline-primary btn-sm mt-2" id="editorAddObjective" type="button">إضافة هدف</button>
+                    </div>
+                    <hr>
+                    <div class="mb-3"><label class="form-label">المنهج (الأقسام والدروس)</label>
+                        <div id="editorSections"></div><button class="btn btn-primary btn-sm mt-2" id="editorAddSection" type="button">إضافة قسم</button>
+                    </div>
+                    <hr>
+                    <div class="mb-3"><label class="form-label">الأسئلة الشائعة (FAQ)</label>
+                        <div id="editorFaqs" role="list"></div><button class="btn btn-outline-info btn-sm mt-2" id="editorAddFaq" type="button">إضافة سؤال وجواب</button>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mt-3"><button class="btn btn-outline-danger" id="editorDeleteBtn" type="button">حذف الدورة</button>
+                        <div class="d-flex gap-2"><button class="btn btn-secondary" type="button" data-bs-dismiss="offcanvas">إلغاء</button><button class="btn btn-success" id="editorSaveBtn" type="submit">حفظ التغييرات</button></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:1100;"></div>
+    </main>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/cpanal.js"></script>
+    <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
+</body>
+
+</html>
