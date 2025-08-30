@@ -672,7 +672,19 @@
         this.dataManager.setDirty(true);
       });
 
-      // Add other dynamic field button listeners...
+      document.getElementById('editorAddSection')?.addEventListener('click', () => {
+        const newField = FormComponents.createSectionCard();
+        this.elements.editorSectionsContainer.appendChild(newField);
+        newField.querySelector('input').focus();
+        this.dataManager.setDirty(true);
+      });
+
+      document.getElementById('editorAddFaq')?.addEventListener('click', () => {
+        const newField = FormComponents.createFaqCard();
+        this.elements.editorFaqsContainer.appendChild(newField);
+        newField.querySelector('input').focus();
+        this.dataManager.setDirty(true);
+      });
     }
 
     // Handle editor form submission
